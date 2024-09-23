@@ -289,7 +289,7 @@ installer WSL2 prep <https://youtu.be/zJoK8MMI23Q?si=bzzq4EwIPcg5FR1K>
 sudo apt-get install python3-pip python3.12-venv -y
 
 cd ~/code
-git clone https://github.com/kubernetes-sigs/kubespray.git && cd kubespray
+git clone git@github.com:kpoxo6op/kubespray.git && cd kubespray
 pip3 install -r requirements.txt --break-system-packages --ignore-installed
 pip3 install ruamel.yaml --break-system-packages
 ```
