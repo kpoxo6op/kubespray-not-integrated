@@ -329,6 +329,37 @@ quick start <https://helm.sh/docs/intro/quickstart/>
 
 ### Resetting the cluster
 
+this deletes the whole cluster
+
 ```sh
-todo
+ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu reset.yml
+# Are you sure you want to reset cluster state? Type 'yes' to reset your cluster.:
+# type yes
+```
+
+### Enable ArgoCD
+
+```sh
+kubectl port-forward svc/argocd-server -n argocd 8080:80
+```
+
+open <https://localhost:8080>, confirm security exception.
+
+### Test local storage provider
+
+Manually create mounts on each node
+
+```sh
+ssh ubuntu@192.168.1.100
+sudo mkdir -p /mnt/disks
+sudo mount --bind / /mnt/disks
+echo "/ /mnt/disks none bind 0 0" | sudo tee -a /etc/fstab
+exit
+# repeat for 192.168.1.101, 192.168.1.102
+```
+
+Test generated `reboot` playbook
+
+```sh
+ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu /home/kpoxo6op/code/kubespray/playbooks/reboot.yml
 ```
