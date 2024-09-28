@@ -297,6 +297,15 @@ pip3 install ruamel.yaml --break-system-packages
 <https://github.com/kubernetes-sigs/kubespray/blob/master/docs/ansible/ansible.md#installing-ansible>
 
 ```sh
+VENVDIR=kubespray-venv
+KUBESPRAYDIR=kubespray
+python3 -m venv $VENVDIR
+source $VENVDIR/bin/activate
+cd $KUBESPRAYDIR
+pip install -U -r requirements.txt
+```
+
+```sh
 cp -rfp inventory/sample inventory/soy-cluster
 pip3 install ruamel.yaml
 declare -a IPS=(node-0,192.168.1.100 node-1,192.168.1.101 node-2,192.168.1.102)
@@ -305,11 +314,21 @@ cat inventory/soy-cluster/hosts.yaml
 ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu cluster.yml
 ```
 
-Check the run
+### Kubectl
+
+install <https://helm.sh/docs/intro/install/#from-apt-debianubuntu>
+
+configure <https://github.com/kubernetes-sigs/kubespray/blob/master/docs/getting_started/setting-up-your-first-cluster.md#access-the-kubernetes-cluster>
+
+### Helm
+
+install <https://helm.sh/docs/intro/install/#from-apt-debianubuntu>
+
+quick start <https://helm.sh/docs/intro/quickstart/>
+
+
+### Resetting the cluster
 
 ```sh
-cd ~
-ssh ubuntu@192.168.1.100 -i pk.pem
-sudo kubectl config get-contexts
-sudo cat /root/.kube/config
+todo
 ```
