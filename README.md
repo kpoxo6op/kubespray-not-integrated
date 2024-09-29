@@ -363,3 +363,5 @@ Test generated `reboot` playbook
 ```sh
 ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu /home/kpoxo6op/code/kubespray/playbooks/reboot.yml
 ```
+
+Retest local store provisioner, find out if it destroys the OS indeed.

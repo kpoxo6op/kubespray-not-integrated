@@ -40,12 +40,15 @@ local_volume_provisioner_namespace: kube-system
 #   - kubernetes.io/hostname
 #   - topology.kubernetes.io/region
 #   - topology.kubernetes.io/zone
-local_volume_provisioner_storage_classes:
-  local-storage:
-    host_dir: /mnt/disks
-    mount_dir: /mnt/disks
-    volume_mode: Filesystem
-    fs_type: ext4
+
+# Boris - ansible destroyed OS on the nodes with
+# local_volume_provisioner_storage_classes uncommented. Retest:
+# local_volume_provisioner_storage_classes:
+#   local-storage:
+#     host_dir: /mnt/disks
+#     mount_dir: /mnt/disks
+#     volume_mode: Filesystem
+#     fs_type: ext4
 #   fast-disks:
 #     host_dir: /mnt/fast-disks
 #     mount_dir: /mnt/fast-disks
