@@ -376,8 +376,4 @@ Test generated `reboot` playbook
 ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu /home/kpoxo6op/code/kubespray/playbooks/reboot.yml
 ```
 
-Test generated temp storage playbook
-
-```sh
-ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu playbooks/tmp_storage.yml
-```
+don't create volumes in /tmp!

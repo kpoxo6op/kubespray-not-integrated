@@ -15,4 +15,4 @@
     - name: Reboot the node
       ansible.builtin.reboot:
         msg: "Reboot initiated by Ansible"
-        reboot_timeout: 300
+        reboot_timeout: 60
