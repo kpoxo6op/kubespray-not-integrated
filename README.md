@@ -283,20 +283,31 @@ See the [test matrix](docs/developers/test_cases.md) for details.
 
 ## Boris Sprayed Soy CLuster
 
-installer WSL2 prep <https://youtu.be/zJoK8MMI23Q?si=bzzq4EwIPcg5FR1K>
+Installer WSL2 prep <https://youtu.be/zJoK8MMI23Q?si=bzzq4EwIPcg5FR1K>
 
 ```sh
-sudo apt-get install python3-pip python3.12-venv -y
-
 cd ~/code
 git clone git@github.com:kpoxo6op/kubespray.git && cd kubespray
+sudo apt-get install python3-pip python3.10-venv -y
+sudo pip3 install --upgrade pip
 pip3 install -r requirements.txt --break-system-packages --ignore-installed
-pip3 install ruamel.yaml --break-system-packages
 ```
 
-<https://github.com/kubernetes-sigs/kubespray/blob/master/docs/ansible/ansible.md#installing-ansible>
+Establish SSH access to nodes with private key
 
 ```sh
+code ~/.ssh/id_rsa
+# paste my private key from secret manager, hit Enter to create new line
+chmod 600 ~/.ssh/id_rsa
+ssh ubuntu@192.168.1.100
+ssh ubuntu@192.168.1.101
+ssh ubuntu@192.168.1.102
+```
+
+copied from <https://github.com/kubernetes-sigs/kubespray/blob/master/docs/ansible/ansible.md#installing-ansible>
+
+```sh
+cd ~/code
 VENVDIR=kubespray-venv
 KUBESPRAYDIR=kubespray
 python3 -m venv $VENVDIR
@@ -306,10 +317,11 @@ pip install -U -r requirements.txt
 ```
 
 ```sh
-cp -rfp inventory/sample inventory/soy-cluster
 pip3 install ruamel.yaml
+cp -rfp inventory/sample inventory/soy-cluster
 declare -a IPS=(node-0,192.168.1.100 node-1,192.168.1.101 node-2,192.168.1.102)
-CONFIG_FILE=inventory/soy-cluster/hosts.yaml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+CONFIG_FILE=inventory/soy-cluster/hosts.yaml
+python3 contrib/inventory_builder/inventory.py ${IPS[@]}
 cat inventory/soy-cluster/hosts.yaml
 ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu cluster.yml
 ```
