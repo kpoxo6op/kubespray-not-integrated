@@ -338,7 +338,6 @@ install <https://helm.sh/docs/intro/install/#from-apt-debianubuntu>
 
 quick start <https://helm.sh/docs/intro/quickstart/>
 
-
 ### Resetting the cluster
 
 this deletes the whole cluster
@@ -357,23 +356,26 @@ kubectl port-forward svc/argocd-server -n argocd 8080:80
 
 open <https://localhost:8080>, confirm security exception.
 
-### Test local storage provider
-
-Manually create mounts on each node
-
-```sh
-ssh ubuntu@192.168.1.100
-sudo mkdir -p /mnt/disks
-sudo mount --bind / /mnt/disks
-echo "/ /mnt/disks none bind 0 0" | sudo tee -a /etc/fstab
-exit
-# repeat for 192.168.1.101, 192.168.1.102
-```
-
 Test generated `reboot` playbook
 
 ```sh
-ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu /home/kpoxo6op/code/kubespray/playbooks/reboot.yml
+ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu playbooks/reboot.yml
 ```
 
-don't create volumes in /tmp!
+### Test local storage provider
+
+recreated the cluster with `/mnt/disks` added to [addons.yml](inventory/soy-cluster/group_vars/k8s_cluster/addons.yml)
+
+kubespray created /mnt/disks
+
+```sh
+ubuntu@node-0:~$ sudo ls -l /mnt/disks
+total 0
+```
+
+test generated [prepare-local-storage.yml](playbooks/prepare-local-storage.yml) playbook
+
+```sh
+ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu playbooks/p
+repare-local-storage.yml
+```

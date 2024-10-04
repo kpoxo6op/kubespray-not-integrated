@@ -45,8 +45,8 @@ local_volume_provisioner_namespace: kube-system
 # local_volume_provisioner_storage_classes uncommented. Retest:
 local_volume_provisioner_storage_classes:
   local-storage:
-    host_dir: /tmp
-    mount_dir: /tmp
+    host_dir: /mnt/disks
+    mount_dir: /mnt/disks
     volume_mode: Filesystem
     fs_type: ext4
 #   fast-disks:

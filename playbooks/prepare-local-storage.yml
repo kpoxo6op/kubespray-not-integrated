@@ -1,0 +1,85 @@
+---
+# Ansible Playbook: prepare-local-storage.yml
+# Description:
+# This playbook automates the preparation of local storage directories for the Local Static Storage Provisioner in Kubernetes.
+# It performs the following actions on all nodes:
+# - Imports the boilerplate playbook for common tasks.
+# - Creates the base directory for local storage (e.g., /mnt/disks).
+# - Creates subdirectories for each local volume.
+# - Performs bind mounts on these directories to make them mount points.
+# - Adds entries to /etc/fstab to persist the mounts across reboots.
+# - Ensures correct permissions and SELinux contexts (if applicable).
+# No manual steps are required; all actions are automated.
+
+- name: Common tasks for every playbook
+  import_playbook: boilerplate.yml
+
+- name: Prepare local storage for Local Static Provisioner
+  hosts: all
+  become: yes
+  gather_facts: true
+  vars:
+    # List of volumes to create on each node
+    local_volumes:
+      - vol1
+      - vol2
+      - vol3
+    # Base directory for local storage
+    local_storage_base_dir: /mnt/disks
+  tasks:
+    - name: Create base directory for local storage
+      file:
+        path: "{{ local_storage_base_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Create local volume directories
+      loop: "{{ local_volumes }}"
+      loop_control:
+        loop_var: volume
+      file:
+        path: "{{ local_storage_base_dir }}/{{ volume }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Perform bind mount on local volume directories
+      loop: "{{ local_volumes }}"
+      loop_control:
+        loop_var: volume
+      shell: |
+        mountpoint -q "{{ local_storage_base_dir }}/{{ volume }}" || \
+        mount --bind "{{ local_storage_base_dir }}/{{ volume }}" "{{ local_storage_base_dir }}/{{ volume }}"
+      args:
+        executable: /bin/bash
+
+    - name: Ensure bind mount is persistent in /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        line: "{{ local_storage_base_dir }}/{{ volume }} {{ local_storage_base_dir }}/{{ volume }} none bind 0 0"
+        state: present
+        create: yes
+      loop: "{{ local_volumes }}"
+      loop_control:
+        loop_var: volume
+
+    - name: Verify that mounts are active
+      shell: mountpoint -q "{{ local_storage_base_dir }}/{{ volume }}"
+      args:
+        executable: /bin/bash
+      loop: "{{ local_volumes }}"
+      loop_control:
+        loop_var: volume
+      register: mount_check
+      failed_when: mount_check.rc != 0
+      changed_when: false
+
+    - name: Set SELinux context (if SELinux is enabled)
+      when: ansible_selinux.status == "enabled"
+      loop: "{{ local_volumes }}"
+      loop_control:
+        loop_var: volume
+      command: "chcon -Rt svirt_sandbox_file_t {{ local_storage_base_dir }}/{{ volume }}"
