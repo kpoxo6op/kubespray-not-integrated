@@ -208,6 +208,9 @@ metallb_config:
     primary:
       ip_range:
         - 192.168.1.120-192.168.1.140
+# kubectl get svc -n ingress-nginx
+# NAME            TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                      AGE
+# ingress-nginx   LoadBalancer   10.233.24.165   192.168.1.120   80:31917/TCP,443:32697/TCP   4h28m
       auto_assign: true
 #     pool1:
 #       ip_range:
