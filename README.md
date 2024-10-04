@@ -373,7 +373,7 @@ ubuntu@node-0:~$ sudo ls -l /mnt/disks
 total 0
 ```
 
-test generated [prepare-local-storage.yml](playbooks/prepare-local-storage.yml) playbook
+test generated [prepare_local_storage.yml](playbooks/prepare_local_storage.yml) playbook
 
 ```sh
 ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu playbooks/p
