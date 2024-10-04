@@ -328,9 +328,7 @@ ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root
 
 ### Kubectl
 
-install <https://helm.sh/docs/intro/install/#from-apt-debianubuntu>
-
-configure <https://github.com/kubernetes-sigs/kubespray/blob/master/docs/getting_started/setting-up-your-first-cluster.md#access-the-kubernetes-cluster>
+install <https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux>
 
 ### Helm
 
@@ -378,4 +376,28 @@ test generated [prepare_local_storage.yml](playbooks/prepare_local_storage.yml) 
 ```sh
 ansible-playbook -i inventory/soy-cluster/hosts.yaml --become --become-user=root --user ubuntu playbooks/p
 repare-local-storage.yml
+```
+
+Local access
+
+configure <https://github.com/kubernetes-sigs/kubespray/blob/master/docs/getting_started/setting-up-your-first-cluster.md#access-the-kubernetes-cluster>
+
+```sh
+ssh ubuntu@192.168.1.100
+USERNAME=$(whoami)
+sudo chown -R $USERNAME:$USERNAME /etc/kubernetes/admin.conf
+exit
+# local machine
+scp ubuntu@192.168.1.100:/etc/kubernetes/admin.conf ~/kubespray-do.conf
+admin.conf
+export KUBECONFIG=~/kubespray-do.conf
+# replace 1270.0.0.1 with 192.168.1.100
+kubectl get nodes
+```
+
+Test Pi-Hole Helm from local PC
+
+```sh
+mkdir -p ~/code/pihole-helm && cd ~/code/pihole-helm
+# continue in ~/code/pihole-helm
 ```
