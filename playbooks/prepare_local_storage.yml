@@ -1,15 +1,8 @@
 ---
-# Ansible Playbook: prepare-local-storage.yml
-# Description:
-# This playbook automates the preparation of local storage directories for the Local Static Storage Provisioner in Kubernetes.
-# It performs the following actions on all nodes:
-# - Imports the boilerplate playbook for common tasks.
-# - Creates the base directory for local storage (e.g., /mnt/disks).
-# - Creates subdirectories for each local volume.
-# - Performs bind mounts on these directories to make them mount points.
-# - Adds entries to /etc/fstab to persist the mounts across reboots.
-# - Ensures correct permissions and SELinux contexts (if applicable).
-# No manual steps are required; all actions are automated.
+# Ansible Playbook: prepare-local-storage.yml Description: This playbook
+# automates the preparation of local storage directories for the Local Static
+# Storage Provisioner in Kubernetes. It dynamically checks available disk space
+# and ensures that the size of PVs complies with the actual available space.
 
 - name: Common tasks for every playbook
   import_playbook: boilerplate.yml
@@ -26,7 +19,30 @@
       - vol3
     # Base directory for local storage
     local_storage_base_dir: /mnt/disks
+    # Define the percentage of disk space to use for storage (e.g., 80%)
+    storage_usage_percentage: 80
   tasks:
+    - name: Get available disk space on the node
+      command: df --output=avail -BG "{{ local_storage_base_dir }}" | tail -n 1 | tr -d 'G'
+      register: available_disk_space
+      changed_when: false
+
+    - name: Calculate usable disk space (based on {{ storage_usage_percentage }}% of available)
+      set_fact:
+        usable_disk_space: "{{ (available_disk_space.stdout | int) * storage_usage_percentage // 100 }}Gi"
+
+    - name: Ensure usable disk space is logged
+      debug:
+        msg: "Usable disk space on node: {{ usable_disk_space }}"
+
+    - name: Calculate space per volume
+      set_fact:
+        volume_size: "{{ (usable_disk_space | regex_replace('Gi', '') | int) // local_volumes | length }}Gi"
+
+    - name: Log volume size
+      debug:
+        msg: "Each volume will be allocated {{ volume_size }} of space."
+
     - name: Create base directory for local storage
       file:
         path: "{{ local_storage_base_dir }}"
