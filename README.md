@@ -309,7 +309,7 @@ copied from <https://github.com/kubernetes-sigs/kubespray/blob/master/docs/ansib
 ```sh
 cd ~/code
 VENVDIR=kubespray-venv
-KUBESPRAYDIR=kubespray
+KUBESPRAYDIR=kubespray-not-integrated
 python3 -m venv $VENVDIR
 source $VENVDIR/bin/activate
 cd $KUBESPRAYDIR
